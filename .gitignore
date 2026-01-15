@@ -1,0 +1,46 @@
+# Environment variables (API keys)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Database
+*.duckdb
+*.duckdb.wal
+data/*.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Exports
+data/exports/*.pdf
+data/exports/*.xlsx
+
+# Instaloader sessions
+session-*
+*.session
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Temp/cache
+*.tmp
+*.temp
+.cache/
+
+# Cookies (gevoelige data)
+*cookies*.txt
+nul
+
+# SQLite queue
+*.sqlite

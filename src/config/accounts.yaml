@@ -1,0 +1,317 @@
+# Ministeries van Buitenlandse Zaken - Social Media Accounts
+# ACTUALISERING DATABRONNEN - JANUARI 2026
+# Geverifieerde accounts per land
+
+accounts:
+  nederland:
+    display_name: "Ministerie van Buitenlandse Zaken"
+    website: "https://www.rijksoverheid.nl/ministeries/ministerie-van-buitenlandse-zaken"
+    verified: true
+    notes: "Hoofdaccounts van het Nederlandse ministerie + Nederland Wereldwijd"
+    platforms:
+      twitter:
+        - handle: "MinBZ"
+          display_name: "Ministerie van Buitenlandse Zaken"
+          url: "https://x.com/minbz"
+          verified: true
+        - handle: "247BZ"
+          display_name: "Nederland Wereldwijd 24/7"
+          url: "https://x.com/247bz"
+      instagram:
+        - handle: "minbz"
+          display_name: "Ministerie van Buitenlandse Zaken"
+          url: "https://www.instagram.com/minbz/"
+          verified: true
+        - handle: "ministerbz"
+          display_name: "Minister van Buitenlandse Zaken"
+          url: "https://www.instagram.com/ministerbz/"
+      facebook:
+        - handle: "NederlandWereldwijd"
+          display_name: "Nederland Wereldwijd"
+          url: "https://www.facebook.com/NederlandWereldwijd"
+        - handle: "MinisterievanBuitenlandseZaken"
+          display_name: "Ministerie van BZ"
+          url: "https://www.facebook.com/MinisterievanBuitenlandseZaken"
+
+  turkije:
+    display_name: "Ministry of Foreign Affairs Turkey"
+    website: "https://www.mfa.gov.tr/"
+    verified: true
+    platforms:
+      twitter:
+        - handle: "MFATurkiye"
+          display_name: "MFA Turkiye"
+          url: "https://x.com/MFATurkiye"
+          verified: true
+      facebook:
+        - handle: "MFATurkiye"
+          display_name: "MFA Turkiye"
+          url: "https://www.facebook.com/MFATurkiye"
+
+  india:
+    display_name: "Ministry of External Affairs India"
+    website: "https://www.mea.gov.in/"
+    verified: true
+    notes: "3M+ volgers - zeer actief op alle platforms"
+    platforms:
+      twitter:
+        - handle: "MEAIndia"
+          display_name: "MEA India"
+          url: "https://x.com/MEAIndia"
+          verified: true
+      instagram:
+        - handle: "meaindia"
+          display_name: "MEA India"
+          url: "https://www.instagram.com/meaindia/"
+
+  china:
+    display_name: "Ministry of Foreign Affairs China"
+    website: "https://www.fmprc.gov.cn/mfa_eng/"
+    verified: true
+    platforms:
+      twitter:
+        - handle: "MFA_China"
+          display_name: "MFA China"
+          url: "https://x.com/MFA_China"
+          verified: true
+      facebook:
+        - handle: "MFAofficeMacao"
+          display_name: "MFA China Macao Office"
+          url: "https://www.facebook.com/MFAofficeMacao"
+
+  indonesie:
+    display_name: "Kemlu Indonesia"
+    website: "https://kemlu.go.id/portal/en"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "Kemlu_RI"
+          display_name: "Kemlu RI"
+          url: "https://x.com/Kemlu_RI"
+      instagram:
+        - handle: "kemlu_ri"
+          display_name: "Kemlu RI"
+          url: "https://www.instagram.com/kemlu_ri/"
+
+  marokko:
+    display_name: "Ministry of Foreign Affairs Morocco"
+    website: "https://diplomatie.ma/en"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "Marocdiplo_EN"
+          display_name: "Maroc Diplomatie EN"
+          url: "https://x.com/Marocdiplo_EN"
+      instagram:
+        - handle: "marocdiplomatie"
+          display_name: "Maroc Diplomatie"
+          url: "https://www.instagram.com/marocdiplomatie/"
+
+  zuid_afrika:
+    display_name: "DIRCO South Africa"
+    website: "https://dirco.gov.za/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "DIRCO_ZA"
+          display_name: "DIRCO ZA"
+          url: "https://x.com/DIRCO_ZA"
+      facebook:
+        - handle: "DIRCOza"
+          display_name: "DIRCO ZA"
+          url: "https://www.facebook.com/DIRCOza"
+
+  vae:
+    display_name: "Ministry of Foreign Affairs UAE"
+    website: "https://www.mofa.gov.ae/EN"
+    verified: true
+    platforms:
+      twitter:
+        - handle: "mofauae"
+          display_name: "MOFA UAE"
+          url: "https://x.com/mofauae"
+          verified: true
+      instagram:
+        - handle: "mofauae"
+          display_name: "MOFA UAE"
+          url: "https://www.instagram.com/mofauae/"
+
+  ksa:
+    display_name: "Ministry of Foreign Affairs Saudi Arabia"
+    website: "https://www.mofa.gov.sa/en/Pages/default.aspx"
+    verified: true
+    notes: "4.1M Twitter volgers - grootste in dataset"
+    platforms:
+      twitter:
+        - handle: "KSAmofaEN"
+          display_name: "KSA MOFA EN"
+          url: "https://x.com/KSAmofaEN"
+          verified: true
+      instagram:
+        - handle: "ksa_mofa"
+          display_name: "KSA MOFA"
+          url: "https://www.instagram.com/ksa_mofa/"
+
+  vk:
+    display_name: "FCDO UK"
+    website: "https://www.gov.uk/government/organisations/foreign-commonwealth-development-office"
+    verified: true
+    platforms:
+      twitter:
+        - handle: "FCDOGovUK"
+          display_name: "FCDO Gov UK"
+          url: "https://x.com/FCDOGovUK"
+          verified: true
+      instagram:
+        - handle: "foreignanddevelopmentoffice"
+          display_name: "FCDO"
+          url: "https://www.instagram.com/foreignanddevelopmentoffice/"
+
+  filipijnen:
+    display_name: "DFA Philippines"
+    website: "https://dfa.gov.ph/"
+    verified: true
+    platforms:
+      twitter:
+        - handle: "DFAPHL"
+          display_name: "DFA Philippines"
+          url: "https://x.com/DFAPHL"
+          verified: true
+      instagram:
+        - handle: "dfaphl"
+          display_name: "DFA Philippines"
+          url: "https://www.instagram.com/dfaphl/"
+
+  thailand:
+    display_name: "MFA Thailand"
+    website: "https://www.mfa.go.th/en"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "MFAThai"
+          display_name: "MFA Thai"
+          url: "https://x.com/MFAThai"
+      facebook:
+        - handle: "ThaiMFA"
+          display_name: "Thai MFA"
+          url: "https://www.facebook.com/ThaiMFA"
+      instagram:
+        - handle: "mfa_thailand"
+          display_name: "MFA Thailand"
+          url: "https://www.instagram.com/mfa_thailand/"
+
+  rusland:
+    display_name: "MID Russia"
+    website: "https://mid.ru/en/"
+    verified: false
+    notes: "Primair actief op Telegram, niet Twitter"
+    platforms:
+      twitter:
+        - handle: "MFA_Russia"
+          display_name: "MFA Russia"
+          url: "https://x.com/MFA_Russia"
+
+  pakistan:
+    display_name: "Ministry of Foreign Affairs Pakistan"
+    website: "https://mofa.gov.pk/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "ForeignOfficePk"
+          display_name: "Foreign Office Pakistan"
+          url: "https://x.com/ForeignOfficePk"
+      instagram:
+        - handle: "foreignofficepk"
+          display_name: "Foreign Office Pakistan"
+          url: "https://www.instagram.com/foreignofficepk/"
+
+  ghana:
+    display_name: "MFARI Ghana"
+    website: "https://mfa.gov.gh/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "GhanaMFA"
+          display_name: "Ghana MFA"
+          url: "https://x.com/GhanaMFA"
+      instagram:
+        - handle: "ghanamfa"
+          display_name: "Ghana MFA"
+          url: "https://www.instagram.com/ghanamfa/"
+
+  iran:
+    display_name: "Ministry of Foreign Affairs Iran"
+    website: "https://en.mfa.gov.ir/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "IRIMFA_EN"
+          display_name: "IRI MFA EN"
+          url: "https://x.com/IRIMFA_EN"
+      facebook:
+        - handle: "IRIMFA"
+          display_name: "IRI MFA"
+          url: "https://www.facebook.com/IRIMFA"
+      instagram:
+        - handle: "iri_mfa"
+          display_name: "IRI MFA"
+          url: "https://www.instagram.com/iri_mfa/"
+
+  egypte:
+    display_name: "Ministry of Foreign Affairs Egypt"
+    website: "https://mfa.gov.eg/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "MfaEgypt"
+          display_name: "MFA Egypt"
+          url: "https://x.com/MfaEgypt"
+      instagram:
+        - handle: "egyptmfa"
+          display_name: "Egypt MFA"
+          url: "https://www.instagram.com/egyptmfa/"
+
+  suriname:
+    display_name: "Ministry of Foreign Affairs Suriname"
+    website: "https://gov.sr/"
+    verified: false
+    notes: "Minimale digitale footprint - verwacht lage data volumes"
+    platforms:
+      twitter:
+        - handle: "MOFASur"
+          display_name: "MOFA Suriname"
+          url: "https://x.com/MOFASur"
+
+  koeweit:
+    display_name: "Ministry of Foreign Affairs Kuwait"
+    website: "https://www.mofa.gov.kw/en/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "MOFAKuwait"
+          display_name: "MOFA Kuwait"
+          url: "https://x.com/MOFAKuwait"
+
+  jordanie:
+    display_name: "Ministry of Foreign Affairs Jordan"
+    website: "https://mfa.gov.jo/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "ForeignMinistry"
+          display_name: "Foreign Ministry Jordan"
+          url: "https://x.com/ForeignMinistry"
+      instagram:
+        - handle: "foreignministryjo"
+          display_name: "Foreign Ministry Jordan"
+          url: "https://www.instagram.com/foreignministryjo/"
+
+  oman:
+    display_name: "Foreign Ministry Oman"
+    website: "https://www.fm.gov.om/"
+    verified: false
+    platforms:
+      twitter:
+        - handle: "FMofOman"
+          display_name: "FM of Oman"
+          url: "https://x.com/FMofOman"
