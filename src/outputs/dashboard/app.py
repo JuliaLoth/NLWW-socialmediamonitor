@@ -29,6 +29,13 @@ try:
 except ImportError:
     TEXTBLOB_AVAILABLE = False
 
+# Deep Translator voor vertaling (optioneel)
+try:
+    from deep_translator import GoogleTranslator
+    TRANSLATOR_AVAILABLE = True
+except ImportError:
+    TRANSLATOR_AVAILABLE = False
+
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -150,7 +157,7 @@ def show_nederland_overview(db):
     st.header("🇳🇱 Nederland")
     st.caption("Ministerie van Buitenlandse Zaken - Social Media Analyse")
 
-    # Get all Dutch Instagram accounts with stats
+    # Get all Dutch Instagram accounts with stats (alleen actieve)
     nl_data = db.fetchall("""
         SELECT a.platform, a.handle, a.display_name,
                COUNT(p.id) as posts,
@@ -159,7 +166,7 @@ def show_nederland_overview(db):
                SUM(p.shares) as shares
         FROM accounts a
         LEFT JOIN posts p ON a.id = p.account_id
-        WHERE a.country = 'nederland' AND a.platform = 'instagram'
+        WHERE a.country = 'nederland' AND a.platform = 'instagram' AND a.status = 'active'
         GROUP BY a.platform, a.handle, a.display_name
         ORDER BY SUM(p.likes) DESC
     """)
@@ -200,28 +207,28 @@ def show_nederland_overview(db):
     # Communicatieprofiel
     st.subheader("📊 Communicatieprofiel")
 
-    # Get communication profile for @minbz
-    minbz_profile = db.fetchone("""
+    # Get communication profile for @nederlandwereldwijd
+    nl_profile = db.fetchone("""
         SELECT cp.pct_procedural, cp.pct_promotional, cp.pct_wijziging, cp.pct_waarschuwing,
                cp.avg_formality_score, cp.pct_with_cta, cp.avg_completeness,
                cp.total_posts_analyzed
         FROM account_comm_profile cp
         JOIN accounts a ON cp.account_id = a.id
-        WHERE a.handle = 'minbz' AND a.country = 'nederland'
+        WHERE a.handle = 'nederlandwereldwijd' AND a.country = 'nederland'
     """)
 
-    if minbz_profile:
+    if nl_profile:
         col1, col2 = st.columns(2)
 
         with col1:
-            st.markdown("**Content Verdeling @minbz**")
+            st.markdown("**Content Verdeling @nederlandwereldwijd**")
 
             categories = ['Procedures', 'Promoties', 'Wijzigingen', 'Waarschuwingen']
             values = [
-                minbz_profile[0] or 0,
-                minbz_profile[1] or 0,
-                minbz_profile[2] or 0,
-                minbz_profile[3] or 0
+                nl_profile[0] or 0,
+                nl_profile[1] or 0,
+                nl_profile[2] or 0,
+                nl_profile[3] or 0
             ]
 
             fig = go.Figure()
@@ -229,7 +236,7 @@ def show_nederland_overview(db):
                 r=values + [values[0]],
                 theta=categories + [categories[0]],
                 fill='toself',
-                name='@minbz',
+                name='@nederlandwereldwijd',
                 line_color='#667eea',
                 fillcolor='rgba(102, 126, 234, 0.3)'
             ))
@@ -244,10 +251,10 @@ def show_nederland_overview(db):
         with col2:
             st.markdown("**Statistieken**")
 
-            formality = minbz_profile[4] or 0.5
-            cta_pct = minbz_profile[5] or 0
-            completeness = minbz_profile[6] or 0
-            total_analyzed = minbz_profile[7] or 0
+            formality = nl_profile[4] or 0.5
+            cta_pct = nl_profile[5] or 0
+            completeness = nl_profile[6] or 0
+            total_analyzed = nl_profile[7] or 0
 
             if formality >= 0.7:
                 tone_label = "Formeel"
@@ -273,7 +280,7 @@ def show_nederland_overview(db):
         SELECT p.caption_snippet, p.likes, p.comments, p.posted_at, a.handle, a.platform
         FROM posts p
         JOIN accounts a ON p.account_id = a.id
-        WHERE a.country = 'nederland' AND a.platform = 'instagram'
+        WHERE a.country = 'nederland' AND a.platform = 'instagram' AND a.status = 'active'
         ORDER BY p.posted_at DESC
         LIMIT 10
     """)
@@ -336,13 +343,13 @@ def show_executive_summary(db):
     with col1:
         st.markdown("**Hoogste Engagement (gem. likes per post)**")
         top_engagement = db.fetchall("""
-            SELECT a.country, a.platform,
+            SELECT a.country,
                    ROUND(AVG(p.likes), 0) as avg_likes,
                    COUNT(p.id) as posts
             FROM posts p
             JOIN accounts a ON p.account_id = a.id
-            WHERE a.status = 'active' AND p.likes > 0
-            GROUP BY a.country, a.platform
+            WHERE a.status = 'active' AND a.platform = 'instagram' AND p.likes > 0
+            GROUP BY a.country
             HAVING COUNT(p.id) >= 10
             ORDER BY AVG(p.likes) DESC
             LIMIT 5
@@ -351,19 +358,18 @@ def show_executive_summary(db):
         if top_engagement:
             for i, row in enumerate(top_engagement, 1):
                 country = COUNTRY_NAMES_NL.get(row[0], row[0])
-                platform_icon = "📸" if row[1] == "instagram" else "📘"
-                st.write(f"{i}. {platform_icon} **{country}** - {int(row[2]):,} gem. likes ({row[3]} posts)")
+                st.write(f"{i}. **{country}** - {int(row[1]):,} gem. likes ({row[2]} posts)")
         else:
             st.info("Onvoldoende data")
 
     with col2:
-        st.markdown("**Meest Actief (posts per maand)**")
+        st.markdown("**Meest Actief (aantal posts)**")
         top_active = db.fetchall("""
-            SELECT a.country, a.platform, COUNT(p.id) as posts
+            SELECT a.country, COUNT(p.id) as posts
             FROM posts p
             JOIN accounts a ON p.account_id = a.id
-            WHERE a.status = 'active'
-            GROUP BY a.country, a.platform
+            WHERE a.status = 'active' AND a.platform = 'instagram'
+            GROUP BY a.country
             ORDER BY COUNT(p.id) DESC
             LIMIT 5
         """)
@@ -371,8 +377,7 @@ def show_executive_summary(db):
         if top_active:
             for i, row in enumerate(top_active, 1):
                 country = COUNTRY_NAMES_NL.get(row[0], row[0])
-                platform_icon = "📸" if row[1] == "instagram" else "📘"
-                st.write(f"{i}. {platform_icon} **{country}** - {row[2]} posts")
+                st.write(f"{i}. **{country}** - {row[1]} posts")
         else:
             st.info("Onvoldoende data")
 
@@ -411,18 +416,6 @@ def show_executive_summary(db):
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("---")
-
-    # AANBEVELINGEN
-    st.subheader("📋 Aanbevelingen")
-
-    st.markdown("""
-    **Op basis van de analyse:**
-    - Analyseer succesvolle posts van top performers
-    - Benchmark eigen prestaties tegen vergelijkbare landen
-    - Focus op content types die het beste presteren
-    - Optimaliseer posting frequentie en timing
-    """)
 
 
 def show_quantitative(db):
@@ -859,16 +852,20 @@ def show_qualitative(db):
     # SECTION 5: Woordwolk
     st.markdown("---")
     st.subheader("5. Woordwolk")
-    st.markdown("Meest gebruikte woorden in posts (exclusief stopwoorden)")
+    st.markdown("Meest gebruikte woorden in posts - vertaald naar Nederlands")
 
     if WORDCLOUD_AVAILABLE:
-        # Haal alle captions op
+        # Haal captions op - max 30 per land voor evenwichtige verdeling
         captions = db.fetchall("""
-            SELECT p.caption_snippet
-            FROM posts p
-            JOIN accounts a ON p.account_id = a.id
-            WHERE a.platform = 'instagram' AND a.status = 'active'
-              AND p.caption_snippet IS NOT NULL
+            WITH ranked_posts AS (
+                SELECT p.caption_snippet, a.country,
+                       ROW_NUMBER() OVER (PARTITION BY a.country ORDER BY p.posted_at DESC) as rn
+                FROM posts p
+                JOIN accounts a ON p.account_id = a.id
+                WHERE a.platform = 'instagram' AND a.status = 'active'
+                  AND p.caption_snippet IS NOT NULL
+            )
+            SELECT caption_snippet FROM ranked_posts WHERE rn <= 30
         """)
 
         if captions:
@@ -879,8 +876,9 @@ def show_qualitative(db):
             all_text = re.sub(r'http\S+', '', all_text)
             all_text = re.sub(r'@\w+', '', all_text)
             all_text = re.sub(r'#\w+', '', all_text)
+            all_text = re.sub(r'[^\w\s]', ' ', all_text)
 
-            # Stopwoorden (Engels + Nederlands)
+            # Stopwoorden
             stopwords = set([
                 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
                 'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
@@ -894,168 +892,72 @@ def show_qualitative(db):
                 'its', 'my', 'his', 'her', 'us', 'them', 'who', 'what', 'which'
             ])
 
-            try:
-                # Windows font pad voor correcte weergave
-                import os
-                font_path = None
-                if os.path.exists('C:/Windows/Fonts/arial.ttf'):
-                    font_path = 'C:/Windows/Fonts/arial.ttf'
-                elif os.path.exists('C:/Windows/Fonts/segoeui.ttf'):
-                    font_path = 'C:/Windows/Fonts/segoeui.ttf'
+            # Tel woord frequenties
+            words = all_text.split()
+            words = [w for w in words if len(w) > 2 and w.lower() not in stopwords]
+            word_counts = Counter(words)
+            top_words = word_counts.most_common(150)
 
-                wordcloud = WordCloud(
-                    width=800, height=400,
-                    background_color='white',
-                    stopwords=stopwords,
-                    max_words=100,
-                    colormap='viridis',
-                    font_path=font_path
-                ).generate(all_text)
+            if top_words:
+                try:
+                    # Haal vertalingen uit database
+                    words_list = [w for w, _ in top_words]
+                    existing = db.fetchall("SELECT original_word, dutch_word FROM word_translations")
+                    translations = {row[0]: row[1] for row in existing}
 
-                fig, ax = plt.subplots(figsize=(10, 5))
-                ax.imshow(wordcloud, interpolation='bilinear')
-                ax.axis('off')
-                st.pyplot(fig)
-                plt.close()
-            except Exception as e:
-                st.warning(f"Kon woordwolk niet genereren: {e}")
+                    # Bouw frequentie dict met vertaalde woorden
+                    translated_freq = {}
+                    latin_check = re.compile(r'^[a-zA-ZÀ-ÿ\s\-]+$')
+
+                    for word, count in top_words:
+                        # Gebruik vertaling als beschikbaar, anders origineel
+                        nl_word = translations.get(word, word)
+
+                        # Alleen toevoegen als het Latijnse tekens bevat
+                        if nl_word and latin_check.match(nl_word):
+                            nl_word = nl_word.lower()
+                            if nl_word in translated_freq:
+                                translated_freq[nl_word] += count
+                            else:
+                                translated_freq[nl_word] = count
+
+                    if len(translated_freq) < 10:
+                        st.warning(f"""
+                        **Onvoldoende vertaalde woorden ({len(translated_freq)})**
+
+                        Voer eerst het vertaalscript uit:
+                        ```bash
+                        python translate_words.py
+                        ```
+                        """)
+                    else:
+                        # Windows font
+                        import os
+                        font_path = 'C:/Windows/Fonts/arial.ttf' if os.path.exists('C:/Windows/Fonts/arial.ttf') else None
+
+                        wordcloud = WordCloud(
+                            width=800, height=400,
+                            background_color='white',
+                            max_words=100,
+                            colormap='viridis',
+                            font_path=font_path
+                        ).generate_from_frequencies(translated_freq)
+
+                        fig, ax = plt.subplots(figsize=(10, 5))
+                        ax.imshow(wordcloud, interpolation='bilinear')
+                        ax.axis('off')
+                        st.pyplot(fig)
+                        plt.close()
+
+                except Exception as e:
+                    st.warning(f"Kon woordwolk niet genereren: {e}")
+            else:
+                st.info("Niet genoeg woorden voor woordwolk")
         else:
             st.info("Geen posts beschikbaar voor woordwolk")
     else:
         st.warning("WordCloud package niet geïnstalleerd. Run: pip install wordcloud")
 
-    # SECTION 6: Sentiment Analyse
-    st.markdown("---")
-    st.subheader("6. Sentiment Analyse")
-    st.markdown("Toon en sentiment van posts per land")
-
-    if TEXTBLOB_AVAILABLE:
-        # Analyseer sentiment per land
-        sentiment_data = db.fetchall("""
-            SELECT a.country, p.caption_snippet
-            FROM posts p
-            JOIN accounts a ON p.account_id = a.id
-            WHERE a.platform = 'instagram' AND a.status = 'active'
-              AND p.caption_snippet IS NOT NULL
-              AND LENGTH(p.caption_snippet) >= 20
-        """)
-
-        if sentiment_data:
-            # Bereken sentiment per land
-            country_sentiments = {}
-            for country, caption in sentiment_data:
-                if country not in country_sentiments:
-                    country_sentiments[country] = []
-                try:
-                    blob = TextBlob(caption)
-                    country_sentiments[country].append(blob.sentiment.polarity)
-                except:
-                    pass
-
-            # Maak DataFrame
-            sentiment_results = []
-            for country, sentiments in country_sentiments.items():
-                if sentiments:
-                    avg_sentiment = sum(sentiments) / len(sentiments)
-                    sentiment_results.append({
-                        "Land": COUNTRY_NAMES_NL.get(country, country),
-                        "Gem. Sentiment": avg_sentiment,
-                        "Posts": len(sentiments)
-                    })
-
-            if sentiment_results:
-                df_sentiment = pd.DataFrame(sentiment_results)
-                df_sentiment = df_sentiment.sort_values("Gem. Sentiment", ascending=False)
-
-                col1, col2 = st.columns([2, 1])
-
-                with col1:
-                    fig = px.bar(df_sentiment,
-                                x="Gem. Sentiment", y="Land",
-                                orientation='h',
-                                color="Gem. Sentiment",
-                                color_continuous_scale="RdYlGn",
-                                range_color=[-0.5, 0.5])
-                    fig.add_vline(x=0, line_dash="dash", line_color="gray")
-                    fig.update_layout(height=400, xaxis_title="Sentiment (-1 negatief, +1 positief)")
-                    st.plotly_chart(fig, use_container_width=True)
-
-                with col2:
-                    st.markdown("**Interpretatie:**")
-                    st.markdown("""
-                    - **> 0.2**: Positief (optimistisch, enthousiast)
-                    - **-0.1 tot 0.2**: Neutraal (zakelijk, informatief)
-                    - **< -0.1**: Negatief (waarschuwend, kritisch)
-
-                    *Gebaseerd op TextBlob sentiment analyse*
-                    """)
-    else:
-        st.warning("TextBlob package niet geïnstalleerd. Run: pip install textblob")
-
-    # SECTION 7: Account Responsiviteit
-    st.markdown("---")
-    st.subheader("7. Account Responsiviteit")
-    st.markdown("Hoe vaak reageert het account op comments van burgers?")
-
-    # Check of we comment data hebben
-    comment_stats = db.fetchall("""
-        SELECT
-            a.country,
-            a.handle,
-            COUNT(DISTINCT c.id) as total_comments,
-            SUM(CASE WHEN c.is_from_account = TRUE THEN 1 ELSE 0 END) as account_replies
-        FROM accounts a
-        LEFT JOIN posts p ON a.id = p.account_id
-        LEFT JOIN post_comments c ON p.id = c.post_id
-        WHERE a.platform = 'instagram' AND a.status = 'active'
-        GROUP BY a.country, a.handle
-        HAVING total_comments > 0
-        ORDER BY account_replies DESC
-    """)
-
-    if comment_stats and any(row[2] > 0 for row in comment_stats):
-        df_response = pd.DataFrame(comment_stats, columns=["Land", "Handle", "Totaal Comments", "Account Reacties"])
-        df_response["Land"] = df_response["Land"].apply(lambda x: COUNTRY_NAMES_NL.get(x, x))
-        df_response["Response Rate"] = (df_response["Account Reacties"] / df_response["Totaal Comments"] * 100).round(1)
-
-        col1, col2 = st.columns([2, 1])
-
-        with col1:
-            fig = px.bar(df_response.sort_values("Response Rate", ascending=True),
-                        x="Response Rate", y="Land",
-                        orientation='h',
-                        color="Response Rate",
-                        color_continuous_scale="Blues",
-                        text="Response Rate")
-            fig.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-            fig.update_layout(height=400, xaxis_title="Response Rate (%)")
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col2:
-            st.markdown("**Wat betekent dit?**")
-            st.markdown("""
-            **Response Rate** meet hoe vaak het officiële account reageert op comments van burgers.
-
-            - **> 10%**: Zeer responsief
-            - **5-10%**: Gemiddeld
-            - **< 5%**: Weinig interactie
-
-            *Hoge responsiviteit duidt op service-gerichtheid*
-            """)
-
-            # Top responder
-            if not df_response.empty:
-                top = df_response.loc[df_response["Response Rate"].idxmax()]
-                st.success(f"**Meest responsief:** {top['Land']} ({top['Response Rate']:.1f}%)")
-    else:
-        st.info("""
-        **Nog geen comment data beschikbaar.**
-
-        Om comments te verzamelen en analyseren, voer uit:
-        ```bash
-        python collect_comments.py
-        ```
-        """)
 
 
 def show_country_detail(db):
@@ -1271,7 +1173,7 @@ def show_methodology(db):
 
         platform_counts = db.fetchall("""
             SELECT platform, COUNT(*) as cnt FROM accounts
-            WHERE status = 'active'
+            WHERE status = 'active' AND platform = 'instagram'
             GROUP BY platform
         """)
 
@@ -1285,13 +1187,12 @@ def show_methodology(db):
 
         countries = db.fetchall("""
             SELECT country, platform, handle FROM accounts
-            WHERE status = 'active'
+            WHERE status = 'active' AND platform = 'instagram'
             ORDER BY country, platform
         """)
 
         if countries:
-            platform_icons = {"instagram": "📸", "facebook": "📘"}
-            country_list = [f"- **{COUNTRY_NAMES_NL.get(c[0], c[0])}** {platform_icons.get(c[1], '')} @{c[2]}" for c in countries]
+            country_list = [f"- **{COUNTRY_NAMES_NL.get(c[0], c[0])}** 📸 @{c[2]}" for c in countries]
             cols = st.columns(3)
             third = len(country_list) // 3
             for i, col in enumerate(cols):
