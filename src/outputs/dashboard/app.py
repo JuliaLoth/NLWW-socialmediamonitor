@@ -301,37 +301,37 @@ def show_nederland_overview(db):
 def show_executive_summary(db):
     """Executive summary - key insights at a glance."""
     st.header("Management Samenvatting")
-    st.caption("De belangrijkste inzichten voor besluitvorming")
+    st.caption("Instagram analyse van Ministeries van Buitenlandse Zaken")
 
     # Key metrics row
     col1, col2, col3, col4 = st.columns(4)
 
-    # Get data (excl. Nederland voor vergelijking)
+    # Get data - alleen Instagram
     total_posts = db.fetchone("""
         SELECT COUNT(*) FROM posts p
         JOIN accounts a ON p.account_id = a.id
-        WHERE a.status = 'active'
+        WHERE a.status = 'active' AND a.platform = 'instagram'
     """)[0]
     total_likes = db.fetchone("""
         SELECT SUM(p.likes) FROM posts p
         JOIN accounts a ON p.account_id = a.id
-        WHERE a.status = 'active'
+        WHERE a.status = 'active' AND a.platform = 'instagram'
     """)[0] or 0
     total_comments = db.fetchone("""
         SELECT SUM(p.comments) FROM posts p
         JOIN accounts a ON p.account_id = a.id
-        WHERE a.status = 'active'
+        WHERE a.status = 'active' AND a.platform = 'instagram'
     """)[0] or 0
-    total_countries = db.fetchone("SELECT COUNT(DISTINCT country) FROM accounts WHERE country != 'nederland'")[0]
+    total_countries = db.fetchone("SELECT COUNT(DISTINCT country) FROM accounts WHERE status = 'active' AND platform = 'instagram'")[0]
 
     with col1:
-        st.metric("📊 Posts geanalyseerd", f"{total_posts:,}")
+        st.metric("📸 Instagram Posts", f"{total_posts:,}")
     with col2:
         st.metric("❤️ Totaal Likes", f"{total_likes:,}")
     with col3:
         st.metric("💬 Totaal Comments", f"{total_comments:,}")
     with col4:
-        st.metric("🌍 Landen vergeleken", total_countries)
+        st.metric("🌍 Landen", total_countries)
 
     st.markdown("---")
 
