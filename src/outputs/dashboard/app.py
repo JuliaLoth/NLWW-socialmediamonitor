@@ -47,7 +47,7 @@ from src.config.settings import COUNTRY_NAMES_NL, PLATFORM_NAMES_NL
 # Page config
 st.set_page_config(
     page_title="MFA Social Media Monitor",
-    page_icon="🌐",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -112,13 +112,13 @@ def main():
     page = st.sidebar.radio(
         "Ga naar",
         [
-            "📊 Samenvatting",
-            "🇳🇱 Nederland Wereldwijd",
-            "📈 Kwantitatief",
-            "💬 Kwalitatief",
-            "🌍 Per Land",
-            "📖 Onderzoeksopzet",
-            "💾 Export"
+            "Samenvatting",
+            "Nederland Wereldwijd",
+            "Kwantitatief",
+            "Kwalitatief",
+            "Per Land",
+            "Onderzoeksopzet",
+            "Export"
         ],
         label_visibility="collapsed"
     )
@@ -136,25 +136,25 @@ def main():
     st.sidebar.metric("Geclassificeerd", total_classified)
 
     # Route to pages
-    if page == "📊 Samenvatting":
+    if page == "Samenvatting":
         show_executive_summary(db)
-    elif page == "🇳🇱 Nederland Wereldwijd":
+    elif page == "Nederland Wereldwijd":
         show_nederland_overview(db)
-    elif page == "📈 Kwantitatief":
+    elif page == "Kwantitatief":
         show_quantitative(db)
-    elif page == "💬 Kwalitatief":
+    elif page == "Kwalitatief":
         show_qualitative(db)
-    elif page == "🌍 Per Land":
+    elif page == "Per Land":
         show_country_detail(db)
-    elif page == "📖 Onderzoeksopzet":
+    elif page == "Onderzoeksopzet":
         show_methodology(db)
-    elif page == "💾 Export":
+    elif page == "Export":
         show_export(db)
 
 
 def show_nederland_overview(db):
     """Nederland Wereldwijd overzicht - consistente stijl met rest dashboard."""
-    st.header("🇳🇱 Nederland")
+    st.header("Nederland")
     st.caption("Ministerie van Buitenlandse Zaken - Social Media Analyse")
 
     # Get all Dutch Instagram accounts with stats (alleen actieve)
@@ -180,32 +180,32 @@ def show_nederland_overview(db):
     # Key metrics row
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("📊 Posts", f"{total_posts:,}")
+        st.metric("Posts", f"{total_posts:,}")
     with col2:
-        st.metric("❤️ Likes", f"{total_likes:,}")
+        st.metric("Likes", f"{total_likes:,}")
     with col3:
-        st.metric("💬 Comments", f"{total_comments:,}")
+        st.metric("Comments", f"{total_comments:,}")
     with col4:
-        st.metric("📈 Engagement", f"{total_engagement:,}")
+        st.metric("Engagement", f"{total_engagement:,}")
 
     st.markdown("---")
 
     # Per Account
-    st.subheader("📸 Instagram Accounts")
+    st.subheader("Instagram Accounts")
 
     if nl_data:
         cols = st.columns(len(nl_data))
         for i, acc in enumerate(nl_data):
             handle, posts, likes, comments = acc[1], acc[3] or 0, acc[4] or 0, acc[5] or 0
             with cols[i]:
-                st.metric(f"@{handle}", f"{posts} posts", f"❤️ {likes:,} | 💬 {comments:,}")
+                st.metric(f"@{handle}", f"{posts} posts", f"{likes:,} likes | {comments:,} comments")
     else:
         st.info("Geen Instagram data")
 
     st.markdown("---")
 
     # Communicatieprofiel
-    st.subheader("📊 Communicatieprofiel")
+    st.subheader("Communicatieprofiel")
 
     # Get communication profile for @nederlandwereldwijd
     nl_profile = db.fetchone("""
@@ -274,7 +274,7 @@ def show_nederland_overview(db):
     st.markdown("---")
 
     # Recente posts
-    st.subheader("📝 Recente Posts")
+    st.subheader("Recente Posts")
 
     recent_posts = db.fetchall("""
         SELECT p.caption_snippet, p.likes, p.comments, p.posted_at, a.handle, a.platform
@@ -288,9 +288,7 @@ def show_nederland_overview(db):
     if recent_posts:
         for post in recent_posts:
             caption = post[0][:100] + "..." if post[0] and len(post[0]) > 100 else post[0]
-            platform_icon = "📸" if post[5] == "instagram" else "📘"
-
-            with st.expander(f"{platform_icon} @{post[4]} - ❤️ {post[1] or 0} | 💬 {post[2] or 0}"):
+            with st.expander(f"@{post[4]} - {post[1] or 0} likes | {post[2] or 0} comments"):
                 st.write(caption or "Geen tekst beschikbaar")
                 if post[3]:
                     st.caption(f"Geplaatst: {str(post[3])[:10]}")
@@ -325,18 +323,18 @@ def show_executive_summary(db):
     total_countries = db.fetchone("SELECT COUNT(DISTINCT country) FROM accounts WHERE status = 'active' AND platform = 'instagram'")[0]
 
     with col1:
-        st.metric("📸 Instagram Posts", f"{total_posts:,}")
+        st.metric("Instagram Posts", f"{total_posts:,}")
     with col2:
-        st.metric("❤️ Totaal Likes", f"{total_likes:,}")
+        st.metric("Totaal Likes", f"{total_likes:,}")
     with col3:
-        st.metric("💬 Totaal Comments", f"{total_comments:,}")
+        st.metric("Totaal Comments", f"{total_comments:,}")
     with col4:
-        st.metric("🌍 Landen", total_countries)
+        st.metric("Landen", total_countries)
 
     st.markdown("---")
 
     # TOP PERFORMERS - meest relevante inzichten
-    st.subheader("🏆 Top Performers per Metric")
+    st.subheader("Top Performers per Metric")
 
     col1, col2 = st.columns(2)
 
@@ -384,7 +382,7 @@ def show_executive_summary(db):
     st.markdown("---")
 
     # ENGAGEMENT VERGELIJKING
-    st.subheader("📊 Engagement Vergelijking per Land")
+    st.subheader("Engagement Vergelijking per Land")
 
     engagement_data = db.fetchall("""
         SELECT a.country,
@@ -424,7 +422,7 @@ def show_quantitative(db):
     st.caption("Meetbare statistieken: interactie, bereik en activiteit")
 
     # Explanation
-    with st.expander("ℹ️ Wat zijn kwantitatieve metrics?", expanded=False):
+    with st.expander("Wat zijn kwantitatieve metrics?", expanded=False):
         st.markdown("""
         **Kwantitatieve metrics** zijn meetbare getallen die de prestaties van social media accounts weergeven:
 
@@ -464,7 +462,7 @@ def show_quantitative(db):
             "Gem. Likes", "Gem. Comments"
         ])
         df["Land"] = df["Land"].apply(lambda x: COUNTRY_NAMES_NL.get(x, x))
-        df["Platform"] = df["Platform"].apply(lambda x: "📸" if x == "instagram" else "📘")
+        df["Platform"] = df["Platform"].apply(lambda x: "IG" if x == "instagram" else "FB")
         df["Engagement"] = (df["Totaal Likes"].fillna(0) + df["Totaal Comments"].fillna(0)).astype(int)
         df["Totaal Likes"] = df["Totaal Likes"].fillna(0).astype(int)
         df["Totaal Comments"] = df["Totaal Comments"].fillna(0).astype(int)
@@ -514,7 +512,7 @@ def show_quantitative(db):
 
         display_df = df[["Land", "Platform", "Handle", "Posts", "Totaal Likes", "Totaal Comments",
                         "Gem. Likes", "Gem. Comments"]].copy()
-        display_df.columns = ["Land", "📱", "Account", "Posts", "Likes", "Comments",
+        display_df.columns = ["Land", "Platform", "Account", "Posts", "Likes", "Comments",
                              "Gem. Likes/Post", "Gem. Comments/Post"]
 
         st.dataframe(display_df, use_container_width=True, hide_index=True)
@@ -558,7 +556,7 @@ def show_qualitative(db):
     st.caption("Communicatiestijl, tone of voice en content categorisatie")
 
     # Explanation
-    with st.expander("ℹ️ Wat is kwalitatieve analyse?", expanded=False):
+    with st.expander("Wat is kwalitatieve analyse?", expanded=False):
         st.markdown("""
         **Kwalitatieve analyse** gaat over de *manier* waarop gecommuniceerd wordt, niet alleen hoeveel.
 
@@ -628,7 +626,7 @@ def show_qualitative(db):
 
         st.markdown("""
         <div class="definition-box">
-        <b>📋 Procedures</b><br>
+        <b>Procedures</b><br>
         Uitleg over processen: visumaanvragen, paspoorten, benodigde documenten<br>
         <i>"Voor een visumaanvraag heeft u nodig: paspoort, foto, formulier..."</i>
         </div>
@@ -636,7 +634,7 @@ def show_qualitative(db):
 
         st.markdown("""
         <div class="definition-box">
-        <b>🤝 Service</b><br>
+        <b>Service</b><br>
         Helpende, dienstverlenende berichten gericht op burgers<br>
         <i>"Heeft u vragen? Neem contact op via ons contactformulier..."</i>
         </div>
@@ -644,7 +642,7 @@ def show_qualitative(db):
 
         st.markdown("""
         <div class="definition-box">
-        <b>🎉 Promoties</b><br>
+        <b>Promoties</b><br>
         Evenementen, cultuur, handel, positieve diplomatieke berichten<br>
         <i>"Bezoek onze culturele week! Ontdek de kunst en muziek..."</i>
         </div>
@@ -652,7 +650,7 @@ def show_qualitative(db):
 
         st.markdown("""
         <div class="definition-box">
-        <b>🔄 Wijzigingen</b><br>
+        <b>Wijzigingen</b><br>
         Aankondigingen van veranderingen, nieuwe regels, updates<br>
         <i>"Vanaf 1 februari gelden nieuwe visumtarieven..."</i>
         </div>
@@ -660,7 +658,7 @@ def show_qualitative(db):
 
         st.markdown("""
         <div class="definition-box">
-        <b>⚠️ Waarschuwingen</b><br>
+        <b>Waarschuwingen</b><br>
         Urgente mededelingen, sluitingen, reisadviezen<br>
         <i>"Let op: consulaat gesloten wegens feestdag..."</i>
         </div>
@@ -673,7 +671,7 @@ def show_qualitative(db):
     st.markdown("Hoe formeel of informeel communiceren de verschillende landen?")
 
     # Explanation of formality
-    with st.expander("🎯 Wat betekent 'formeel' precies?"):
+    with st.expander("Wat betekent 'formeel' precies?"):
         col1, col2 = st.columns(2)
 
         with col1:
@@ -707,7 +705,7 @@ def show_qualitative(db):
             """)
             st.markdown("""
             <div class="example-box">
-            "Hey! 👋 Check onze nieuwe visa-app! Makkelijker aanvragen
+            "Hey! Check onze nieuwe visa-app! Makkelijker aanvragen
             was nog nooit zo simpel. Probeer het nu!"
             </div>
             """, unsafe_allow_html=True)
@@ -978,7 +976,7 @@ def show_country_detail(db):
         return
 
     country_name = COUNTRY_NAMES_NL.get(selected_country, selected_country)
-    st.subheader(f"📍 {country_name}")
+    st.subheader(country_name)
 
     # Get account for this country
     country_accounts = [a for a in accounts if a.country == selected_country]
@@ -1097,16 +1095,7 @@ def show_country_detail(db):
                 content_type = post[4] or "onbekend"
                 content_type_label = content_type_labels.get(content_type, content_type.title())
 
-                type_emoji = {
-                    "procedureel": "📋",
-                    "promotioneel": "🎉",
-                    "wijziging": "🔄",
-                    "waarschuwing": "⚠️",
-                    "service": "🤝",
-                    "overig": "📝"
-                }.get(content_type, "📝")
-
-                with st.expander(f"{type_emoji} {content_type_label} - ❤️ {post[1] or 0} | 💬 {post[2] or 0}"):
+                with st.expander(f"{content_type_label} - {post[1] or 0} likes | {post[2] or 0} comments"):
                     st.write(caption or "Geen tekst beschikbaar")
                     if post[3]:
                         st.caption(f"Geplaatst: {str(post[3])[:10]}")
@@ -1121,7 +1110,7 @@ def show_country_detail(db):
 
 def show_methodology(db):
     """Research methodology and definitions."""
-    st.header("📖 Onderzoeksopzet & Definities")
+    st.header("Onderzoeksopzet & Definities")
     st.caption("Hoe is dit onderzoek uitgevoerd en wat betekenen de begrippen?")
 
     # Tabs for different sections
@@ -1192,7 +1181,7 @@ def show_methodology(db):
         """)
 
         if countries:
-            country_list = [f"- **{COUNTRY_NAMES_NL.get(c[0], c[0])}** 📸 @{c[2]}" for c in countries]
+            country_list = [f"- **{COUNTRY_NAMES_NL.get(c[0], c[0])}** @{c[2]}" for c in countries]
             cols = st.columns(3)
             third = len(country_list) // 3
             for i, col in enumerate(cols):
@@ -1214,7 +1203,7 @@ def show_methodology(db):
 
         with col1:
             st.markdown("""
-            #### 🟢 Informeel (0.0 - 0.4)
+            #### Informeel (0.0 - 0.4)
 
             **Kenmerken:**
             - Persoonlijke aanspreekvorm ("je", "jij")
@@ -1226,12 +1215,12 @@ def show_methodology(db):
 
             **Voorbeelden:**
             """)
-            st.info('"Hey! 👋 Nieuw paspoort nodig? Check onze website voor de snelste route!"')
-            st.info('"Super nieuws! 🎉 Onze nieuwe visa-app is live. Download hem nu!"')
+            st.info('"Hey! Nieuw paspoort nodig? Check onze website voor de snelste route!"')
+            st.info('"Super nieuws! Onze nieuwe visa-app is live. Download hem nu!"')
 
         with col2:
             st.markdown("""
-            #### 🔴 Formeel (0.7 - 1.0)
+            #### Formeel (0.7 - 1.0)
 
             **Kenmerken:**
             - Beleefdsheidsvorm ("u")
@@ -1255,27 +1244,27 @@ def show_methodology(db):
         """)
 
         content_types = [
-            ("📋 Procedures", "Uitleg over processen en aanvraagprocedures",
+            ("Procedures", "Uitleg over processen en aanvraagprocedures",
              "Visumaanvragen, paspoort vernieuwing, benodigde documenten, openingstijden, stappen in een proces",
              '"Voor een visumaanvraag heeft u nodig: geldig paspoort, pasfoto, ingevuld formulier. Lever in bij loket 3."'),
 
-            ("🤝 Service", "Helpende, dienstverlenende berichten gericht op burgers",
+            ("Service", "Helpende, dienstverlenende berichten gericht op burgers",
              "Contactinformatie, hulp aanbieden, vragen beantwoorden, doorverwijzingen, klantenservice",
              '"Heeft u vragen over uw aanvraag? Neem contact op via ons formulier of bel +31 247 247 247."'),
 
-            ("🎉 Promoties", "Positieve berichten over evenementen, cultuur en diplomatie",
+            ("Promoties", "Positieve berichten over evenementen, cultuur en diplomatie",
              "Culturele events, handelsmissies, nationale feestdagen, staatsbezoeken, successen",
              '"Vier met ons de Nationale Dag! Ontdek onze rijke cultuur en tradities op het festival dit weekend."'),
 
-            ("🔄 Wijzigingen", "Aankondigingen van veranderingen en updates",
+            ("Wijzigingen", "Aankondigingen van veranderingen en updates",
              "Nieuwe regels, gewijzigde tarieven, aangepaste procedures, beleidswijzigingen",
              '"Belangrijk: vanaf 1 maart gelden nieuwe visumtarieven. Bekijk de actuele prijslijst op onze website."'),
 
-            ("⚠️ Waarschuwingen", "Urgente mededelingen en alerts",
+            ("Waarschuwingen", "Urgente mededelingen en alerts",
              "Sluitingen, vertragingen, reisadviezen, noodsituaties, storingen",
              '"Let op: het consulaat is 25-26 december gesloten wegens feestdagen. Spoedeisende zaken: noodlijn."'),
 
-            ("📝 Overig", "Berichten die niet in bovenstaande categorieën passen",
+            ("Overig", "Berichten die niet in bovenstaande categorieën passen",
              "Condoleances, felicitaties, algemene statements, persoonlijke berichten",
              '"We wensen iedereen een voorspoedig nieuwjaar."')
         ]
@@ -1389,7 +1378,7 @@ Classificeer de post op de volgende dimensies:
         st.markdown("""
         ### Beperkingen van dit onderzoek
 
-        ⚠️ **Houd rekening met de volgende beperkingen:**
+        **Houd rekening met de volgende beperkingen:**
 
         #### Data beperkingen
         - **Instagram rate-limiting**: Instagram beperkt automatische dataverzameling,
@@ -1415,12 +1404,12 @@ Classificeer de post op de volgende dimensies:
 
         ### Aanbevelingen voor interpretatie
 
-        ✅ **Gebruik deze data voor:**
+        **Gebruik deze data voor:**
         - Algemene trends en patronen identificeren
         - Vergelijking tussen landen op hoofdlijnen
         - Inspiratie voor communicatiestrategie
 
-        ❌ **Gebruik deze data NIET voor:**
+        **Gebruik deze data NIET voor:**
         - Harde conclusies over "goed" of "slecht"
         - Individuele post-beoordeling
         - Definitieve rankings
@@ -1429,7 +1418,7 @@ Classificeer de post op de volgende dimensies:
 
 def show_export(db):
     """Export functionality."""
-    st.header("💾 Data Export")
+    st.header("Data Export")
 
     st.subheader("Export Opties")
 
@@ -1465,7 +1454,7 @@ def show_export(db):
 
                     csv = df.to_csv(index=False).encode('utf-8')
                     st.download_button(
-                        "⬇️ Download CSV",
+                        "Download CSV",
                         csv,
                         "mfa_communicatieprofielen.csv",
                         "text/csv"
@@ -1495,7 +1484,7 @@ def show_export(db):
 
                     csv = df.to_csv(index=False).encode('utf-8')
                     st.download_button(
-                        "⬇️ Download CSV",
+                        "Download CSV",
                         csv,
                         "mfa_posts_classificatie.csv",
                         "text/csv"
@@ -1521,7 +1510,7 @@ def show_export(db):
 
                     csv = df.to_csv(index=False).encode('utf-8')
                     st.download_button(
-                        "⬇️ Download CSV",
+                        "Download CSV",
                         csv,
                         "mfa_ruwe_posts.csv",
                         "text/csv"
