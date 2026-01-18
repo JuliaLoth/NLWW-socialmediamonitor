@@ -8,8 +8,7 @@ __pycache__/
 venv/
 .venv/
 
-# Database
-*.duckdb
+# Database (alleen wal files, niet de database zelf voor Streamlit Cloud)
 *.duckdb.wal
 data/*.db
 

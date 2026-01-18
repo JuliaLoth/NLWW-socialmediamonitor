@@ -42,3 +42,9 @@ tenacity>=8.2.0
 
 # LLM Classification (optional)
 anthropic>=0.18.0
+
+# Dashboard visualization (optional but needed for full functionality)
+wordcloud>=1.9.0
+matplotlib>=3.8.0
+textblob>=0.17.0
+deep-translator>=1.11.0
