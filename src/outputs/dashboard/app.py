@@ -320,7 +320,11 @@ def show_executive_summary(db):
         JOIN accounts a ON p.account_id = a.id
         WHERE a.status = 'active' AND a.platform = 'instagram'
     """)[0] or 0
-    total_countries = db.fetchone("SELECT COUNT(DISTINCT country) FROM accounts WHERE status = 'active' AND platform = 'instagram'")[0]
+    total_countries = db.fetchone("""
+        SELECT COUNT(DISTINCT a.country) FROM posts p
+        JOIN accounts a ON p.account_id = a.id
+        WHERE a.status = 'active' AND a.platform = 'instagram'
+    """)[0]
 
     with col1:
         st.metric("Instagram Posts", f"{total_posts:,}")
