@@ -123,15 +123,24 @@ def main():
         label_visibility="collapsed"
     )
 
-    # Quick stats in sidebar
+    # Quick stats in sidebar - alleen Instagram
     st.sidebar.markdown("---")
-    st.sidebar.caption("**Data Overzicht**")
+    st.sidebar.caption("**Data Overzicht (Instagram)**")
 
-    total_posts = db.fetchone("SELECT COUNT(*) FROM posts")[0]
-    total_accounts = db.fetchone("SELECT COUNT(*) FROM accounts WHERE status='active'")[0]
-    total_classified = db.fetchone("SELECT COUNT(*) FROM post_classification")[0]
+    total_posts = db.fetchone("""
+        SELECT COUNT(*) FROM posts p
+        JOIN accounts a ON p.account_id = a.id
+        WHERE a.status = 'active' AND a.platform = 'instagram'
+    """)[0]
+    total_accounts = db.fetchone("SELECT COUNT(*) FROM accounts WHERE status='active' AND platform='instagram'")[0]
+    total_classified = db.fetchone("""
+        SELECT COUNT(*) FROM post_classification pc
+        JOIN posts p ON pc.post_id = p.id
+        JOIN accounts a ON p.account_id = a.id
+        WHERE a.status = 'active' AND a.platform = 'instagram'
+    """)[0]
 
-    st.sidebar.metric("Posts verzameld", total_posts)
+    st.sidebar.metric("Posts", total_posts)
     st.sidebar.metric("Accounts", total_accounts)
     st.sidebar.metric("Geclassificeerd", total_classified)
 
